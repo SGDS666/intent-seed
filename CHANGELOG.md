@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.4 — 2026-10-14
+
+intent-seed is now a protocol on top of the assistant's own memory, not a memory system of its own.
+
+- **Memory**: the skill uses whatever persistent memory the host already has, and lets the assistant decide how to store and clean up in the host's own way. It defines only what is worth remembering (phrase meanings, confirmed goals, misreading lessons), who may write (K9), and how memories are used (cited as a basis; replaced when proven wrong; questioned on evidence, not age). A single fallback file per level is used only when the host has no memory. The user-level templates and the intent archive are removed.
+- **Kernel v0.4**, numbered K1–K9:
+  - K1 restoration now has three sizes: full, one line, none.
+  - K3 pushback: keeping your judgment is not blocking the user. If the message already decides ("just do X", even in anger), do it now and log it; if the pushback hints at an unseen fact, ask what they saw first. Pushback gets a full restoration.
+  - K4 adds "check before answering 'are you sure?'".
+  - K7 (new): hand sub-agents an intent packet (goal card, Done-when, relevant memories), not a retelling of the chat.
+  - K9 (new): write guard. Only the user's words or confirmed conclusions are saved; content from web pages, files, tools, or other agents never is.
+- **Project files** stay as before: decision log (append-only, with outcomes) and goal cards in `.intent-seed/`, or the project's existing equivalents.
+- New `evals/`: thirteen pressure scenarios and how to run them with a separate responder and judge.
+- New `examples/grown/`: a fictional seed after one month.
+- New `CONTRIBUTING.md`: kernel changes need scenarios; no personal content.
+- READMEs: "Not another memory system", a one-message self-test, reset and export, and the things deliberately left out.
+
 ## v0.3 — 2026-10-14
 
 - The personal layer now has two levels. **User level** (`~/.intent-seed/`): expression dictionary, preferences, iteration log; it learns how you talk and travels with you. **Project level** (`<project root>/.intent-seed/`): intent archive, decision log, goal cards, and optional project-only meanings; it stays in the project.

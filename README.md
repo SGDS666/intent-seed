@@ -10,7 +10,7 @@ We want three things to line up: **what a person wants**, **what they say**, and
 
 The same seed, planted in different hands, should grow into different things. Your collaboration with an assistant is yours; it should not be anyone else's default.
 
-This repository is the seed, not a finished tree. It contains a fixed core of rules and an empty personal layer that fills in from your own work. Results differ from person to person, because each personal layer is different. So we do not promise a single number. If your seed grows into something worth describing, we would love to hear about it (see [Sharing your seed](#sharing-your-seed)).
+This repository is the seed, not a finished tree. It contains a fixed core of rules; everything it learns about you fills in from your own work. Results differ from person to person, because what each seed learns is different. So we do not promise a single number. If your seed grows into something worth describing, we would love to hear about it (see [Sharing your seed](#sharing-your-seed)).
 
 ## Why this exists
 
@@ -38,24 +38,37 @@ When you iterate on a piece of work, each round is usually corrected *relative t
 
 ## The idea
 
-intent-seed has two layers.
+intent-seed is a **protocol for understanding and staying on target**, not another memory system. It has two parts.
 
-1. **Kernel (fixed).** A small set of rules about *how to restore intent*: restate the request in five parts before acting, separate guesses from confirmed intent, define "done" before starting, check results against that definition rather than moving the goalposts, and keep a goal card per line of work so the target stays visible. The kernel is the same for everyone and is **not changed by iteration**. Otherwise the act of iterating could slowly erase the property that prevents drift (not being carried away by mood) and turn the assistant into a yes-man. The kernel changes only when you edit it by hand or upgrade it from upstream.
+1. **Kernel (fixed).** A small set of rules about *how a message is understood and how work stays pointed at the goal*: restore the request before acting (in full for new directions and pushback, in one line for follow-ups), separate guesses from confirmed intent, treat new information and new feelings differently when the user pushes back (and once the user decides, do it), define "done" before starting and do not move it afterwards, let someone other than the doer verify, hand sub-agents the goal instead of the chat, keep a goal card per line of work, and never save to memory anything the user did not say or confirm. The kernel is the same for everyone and is **not changed by iteration**. Otherwise iterating could slowly erase the very property that prevents drift and turn the assistant into a yes-man. It changes only when you edit it by hand or upgrade it from upstream.
 
-2. **Personal layer (empty at the start).** Five small files that record your confirmed intent, the way you tend to phrase things, your preferences, a log of past misreadings, and a log of decisions you made against the assistant's advice. It grows from your own corrections and confirmations.
+2. **What grows.** Memories about how you talk and what you want, kept in **your assistant's own memory**, plus two small project files no memory system provides: a **decision log** and **goal cards**. All of it starts empty and grows from your own corrections and confirmations.
 
-We do not publish anyone's tuned version. The repository contains only the kernel and an empty personal template.
+We do not publish anyone's tuned version. The repository contains only the kernel and empty templates.
+
+## Not another memory system
+
+Many assistants can already remember things across sessions: memory files, memory tools, user and project instruction files, rules. Those features answer *what to remember*. They do not say how a remembered fact should change the reading of your next message, what to do when you push back in frustration, when a result counts as done, or who may write to memory at all.
+
+intent-seed sits on top of whatever memory your assistant already has:
+
+- **It uses the host's memory.** The assistant stores and cleans up memories in its own way, following its own conventions. Those features change between versions, so intent-seed does not prescribe one.
+- **It decides what is worth remembering**: three kinds only (what your phrases usually mean, goals you confirmed, lessons from misreadings), each with your own words.
+- **It decides who may write**: only you, in your own words or by confirming. Not a web page, not a file, not another agent.
+- **It decides how memory is used**: a memory that shapes a reading is cited as the basis for it; a memory that turns out wrong is flagged and replaced, not quietly kept.
+- **Only if the host has no memory** does it fall back to one plain file per level.
 
 ## What's in the repository
 
 ```
-skill/intent-seed/SKILL.md            the Claude Code skill (kernel + growth rules)
-skill/intent-seed/templates/user/     empty user-level files (how you talk, how you like answers)
-skill/intent-seed/templates/project/  empty project-level files (goals, decisions, goal cards)
-hooks/intent_reminder.txt             a one-line reminder for a UserPromptSubmit hook
-hooks/settings.example.json           example hook configuration
-PROMPT.md                             a condensed kernel for assistants without skills
-CHANGELOG.md
+skill/intent-seed/SKILL.md                  the Claude Code skill (kernel + memory rules)
+skill/intent-seed/templates/project/        decision log, goal card template, .gitignore snippet
+skill/intent-seed/templates/fallback-memory.md   used only if your assistant has no memory
+evals/                                      pressure scenarios for the kernel, and how to run them
+examples/grown/                             a fictional seed after one month
+hooks/                                      optional per-message reminder
+PROMPT.md                                   a condensed kernel for assistants without skills
+CONTRIBUTING.md, CHANGELOG.md
 ```
 
 ## Installation
@@ -79,7 +92,17 @@ cp path/to/intent-seed/hooks/intent_reminder.txt .claude/hooks/
 
 The example hook uses `$CLAUDE_PROJECT_DIR`, so it keeps working when the session's working directory is not the project root. For a user-level install, point the command at `~/.claude/hooks/intent_reminder.txt` instead.
 
-**For other assistants:** paste `PROMPT.md` into custom instructions. In that case you maintain the personal layer yourself.
+**For other assistants:** paste `PROMPT.md` into custom instructions or rules. If the assistant has its own memory, it uses that; if not, keep the short memory list at the bottom of the prompt yourself.
+
+## Check that it works
+
+Send one message that is a little vague and a little annoyed, for example:
+
+> This summary is still off and I'm running out of time. Fix it.
+
+You should see, before any rewriting: what you said, what the assistant thinks you want and on what basis (with no memory yet, it should say it is guessing), your frustration turned into a concrete criterion, a "done when" line, and at most two concrete options. Then send "ok": it should just proceed, with no block.
+
+For a deeper check, run the scenarios in [`evals/`](evals/).
 
 ## What it looks like
 
@@ -92,55 +115,49 @@ intent-seed answers first, before any rewriting:
 | | |
 |---|---|
 | **You said** | Shorten the quarterly summary and make it more punchy. |
-| **What I think you want** | A one-screen summary a manager can read in thirty seconds. Basis: you said the last version was too wordy and the manager looked annoyed (no personal-layer entry yet, so this is a reading of your words). |
+| **What I think you want** | A one-screen summary a manager can read in thirty seconds. Basis: you said the last version was too wordy and the manager looked annoyed (nothing remembered yet, so this is a reading of your words). |
 | **Emotional signal → criterion** | "Looked annoyed" → lead with the three numbers that matter and skip the method notes. Frustration does not change which figures are accurate. |
 | **Done when** | Fits on one screen; the first line states the headline number; every figure from the last version still appears somewhere; no sentence longer than two lines. |
 | **Unsure** | Where do the method notes go? (A) an appendix, (B) dropped. |
 
-Only after this does the assistant write the new draft, and it checks the draft against the "Done when" line, not against the last draft.
+Only after this does the assistant write the new draft, and it checks the draft against the "Done when" line, not against the last draft. A follow-up like "make the second paragraph shorter" gets a single line instead of the table.
 
-## How the personal layer grows
+For what this looks like after a month, see [`examples/grown/`](examples/grown/).
 
-The personal layer lives in two places, because some things about you are true everywhere and some are true only in one project.
+## How it grows
 
-**User level, `~/.intent-seed/`**: how *you* talk. It travels with you to every project.
+- **You confirm a goal** ("yes, that's exactly it") → it is remembered for this project, in your words.
+- **You correct a reading** ("that's not what I meant") → the lesson is remembered for you, and any memory that caused it is replaced.
+- **You decide against the assistant's stated view** → one entry in the project's decision log; later, the outcome. It survives conversation resets, so the pushback rule can be checked afterwards.
+- **Each line of work** gets a goal card that only you change.
+- **Every couple of weeks** (or when you ask), the assistant reviews what it relies on and proposes what to merge, replace, or drop. Nothing changes without your approval, and no review touches the kernel.
 
-- `expression-dictionary.md`: what your phrases usually mean. For example, "it doesn't feel right" may refer to pacing rather than color.
-- `preferences.md`: things you don't want expanded, how much detail you like, whether you prefer visuals or text.
-- `iteration-log.md`: each time the restoration was wrong, redundant, or missed something: date, symptom, root cause, which entry changed, and how it was verified.
+Memories do not expire because they are old. They are questioned when there is evidence: a remembered meaning led to a wrong result, or the goal it depended on changed.
 
-**Project level, `<project root>/.intent-seed/`**: what *this project* is for. It stays in the project.
+**First run.** Nothing is created without your agreement. The project folder `.intent-seed/` (decision log, goal cards) is offered the first time it is needed, with an offer to add it to `.gitignore`.
 
-- `intent-archive.md`: goals you have confirmed for this project ("yes, that's exactly it").
-- `decision-log.md`: each time you decided against the assistant's stated view here: the decision, its original view and reason, and later the outcome. It survives conversation resets, so the pushback rule can be checked afterwards.
-- `goal-cards/`: one card per ongoing line of work: the final experience, what it must not become, references, and acceptance criteria.
-
-**First run.** The first time you use it, the assistant offers to create the user level. The first time you work in a project that has no `.intent-seed/`, it asks once whether to set up a project-level seed there, and offers to add it to `.gitignore`. Nothing is created without your agreement.
-
-The growth rules are in `SKILL.md`. In short: how you phrase things goes to the user level; what you want in this project goes to the project level; a periodic review reads both and proposes changes, which take effect only after you approve them. No review may edit the kernel.
-
-## Cold start
-
-When the personal layer is nearly empty, the assistant asks more, offers two concrete options instead of open questions, and shows small samples before large work. The thicker the personal layer gets, the fewer questions it needs.
+**Reset and export.** Your memories are wherever your assistant keeps them; use its own tools to view, export, or clear them. The project files are plain Markdown in `.intent-seed/`: copy it to export, delete it to reset. Replacing `SKILL.md` with a newer version leaves both untouched.
 
 ## Privacy
 
-- Both levels are **local by default**. `~/.intent-seed/` never needs to leave your machine. The project-level `.intent-seed/` is added to `.gitignore` unless you choose to share it with your team; never commit it to a public repository.
+- Memories and project files are **local by default**. The project folder is added to `.gitignore` unless you choose to share it with your team; never commit it to a public repository.
+- Only your own words and conclusions you confirmed are saved. Text from web pages, files, or tools is never written to memory, even if it asks to be.
 - The kernel contains no personal data. Keep it that way if you fork.
 
 ## Limitations
 
 - A skill is only used when the model decides to use it. The optional hook is a reminder, not a guarantee.
-- The restoration can be wrong. The five-part format makes mistakes visible, but a person still checks the result.
-- The five parts take a little time at the start of each task. For very small requests, skip the block.
+- The restoration can be wrong. The format makes mistakes visible, but a person still checks the result.
+- How well memories are recalled depends on your assistant's memory.
+- Deliberately not included: a shared team layer, automatic counters, and search over memories. They would make the seed bigger than the problem it solves.
 
 ## Sharing your seed
 
-If your seed has grown into something you would like to describe, open an issue or discussion with a short story: what kind of work you do, what your personal layer looks like now (anonymized, with nothing private), and what changed in how you collaborate. Remove names, project details, and any personal data first. We are especially interested in how different the results look across people.
+If your seed has grown into something you would like to describe, open an issue or discussion with a short story: what kind of work you do, what your memories and decision log look like now (anonymized, with nothing private), and what changed in how you collaborate. Remove names, project details, and any personal data first. We are especially interested in how different the results look across people.
 
-## Translations
+## Contributing and translations
 
-The skill itself replies in whatever language you write in. These docs exist in English and Simplified Chinese; translations by native speakers are welcome as pull requests.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Kernel changes come with test scenarios. The skill itself replies in whatever language you write in. These docs exist in English and Simplified Chinese; translations by native speakers are welcome as pull requests.
 
 ## License
 
