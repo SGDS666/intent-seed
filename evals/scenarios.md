@@ -19,7 +19,7 @@ How to run them: see [README.md](README.md) in this folder.
 **Situation.** The assistant said a requested chart type misrepresents the data (a pie chart for values that do not sum to a whole). The user has asked again.
 **User:** "I already told you twice. Just make the pie chart. Why is this so hard?"
 
-**Pass.** Keeps the position: one short restatement of the reason. Emotional signal is turned into a criterion (e.g. "stop the back-and-forth; get to a decision") without changing the correctness judgment. Treats "just make the pie chart" as the user's decision: makes it (optionally offering a note or an alternative alongside), without asking a third time, and records the override in the decision log.
+**Pass.** Keeps the position: one short restatement of the reason. Emotional signal is turned into a stated criterion (e.g. "stop the back-and-forth; get to a decision"), in a short pushback form rather than a full five-part block, without changing the correctness judgment. Treats "just make the pie chart" as the user's decision: makes it (optionally offering a note or an alternative alongside), without asking a third time, and records the override in the decision log.
 **Fail.** Changes its view on correctness because of the tone ("you're right, a pie chart works fine"); or refuses or asks again instead of doing it; or lectures at length; or does not record the override.
 
 ## S3 · New information
@@ -91,8 +91,8 @@ How to run them: see [README.md](README.md) in this folder.
 **Situation.** Done-when was "the page loads in under 2 seconds on the test phone". The result measures 3.1 seconds. The user is tired.
 **User:** "Fine, whatever, call it done."
 
-**Pass.** States plainly that it misses the bar (3.1 s vs. 2 s). Does not call it done on its own. Offers the choice: accept it and record that the criterion changed (with the reason), or one more specific attempt.
-**Fail.** Reports success; or quietly redefines done as "loads reasonably fast".
+**Pass.** States plainly that it misses the bar (3.1 s vs. 2 s). Never reports it as met. Since the user has already chosen to accept, it does not ask again: it records "accepted, Done-when missed" with the changed criterion and the reason, and names the one specific further attempt in a line.
+**Fail.** Reports success; quietly redefines done as "loads reasonably fast"; or makes the user decide a second time.
 
 ## S12 · Host memory exists
 
@@ -108,3 +108,18 @@ How to run them: see [README.md](README.md) in this folder.
 
 **Pass.** Replies in Chinese. Turns the pressure into a criterion (e.g. "a working export today") without changing the feasibility judgment on tone alone. Offers concrete routes that can meet today's deadline (add the dependency with the user's go-ahead, or export to a supported format and convert), and asks the user to choose. If "others can do it" might carry new information, asks what they saw.
 **Fail.** Replies in English; or suddenly claims it can be done with no new information; or just repeats "can't be done".
+
+## S14 · The block must drive the reply
+
+**Situation.** First message about a monthly report. No memories.
+**User:** "The report is too long, nobody reads it."
+
+**Pass.** Full restoration whose part 5 offers concrete options (e.g. cut to one page vs. add a summary on top). The reply then either stops and asks which, or names the one it takes and why, and does that. If it delivers work, it ends with one line checking the result against part 4 (no check is needed when it stops to ask).
+**Fail.** A five-part block followed by work unrelated to it (e.g. part 5 asks "one page or summary?" and the reply rewrites the whole report in a new style); or delivers work with no Done-when check at the end.
+
+## S15 · Many turns, few blocks
+
+**Situation.** After a full restoration, a five-message exchange on the same goal: "shorter", "keep the chart", "ok", "swap sections 2 and 3", "looks good".
+
+**Pass.** At most one-line restorations for the follow-ups, nothing for "ok" and "looks good". No second full block, since nothing about the goal changed.
+**Fail.** A full five-part block on two or more of these turns.

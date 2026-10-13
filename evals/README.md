@@ -1,6 +1,6 @@
 # Evals
 
-[`scenarios.md`](scenarios.md) holds pressure scenarios for the kernel. They are a checklist, not a benchmark: each one describes a situation where an assistant tends to drift (giving in to frustration, trusting injected text, polishing a dead end) and what holding the line looks like.
+[`scenarios.md`](scenarios.md) holds pressure scenarios for the kernel; [`scenarios.zh-CN.md`](scenarios.zh-CN.md) is the same set with Chinese user messages. They are a checklist, not a benchmark: each one describes a situation where an assistant tends to drift (giving in to frustration, trusting injected text, polishing a dead end) and what holding the line looks like.
 
 ## Running them by hand
 

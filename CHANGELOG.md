@@ -6,13 +6,16 @@ intent-seed is now a protocol on top of the assistant's own memory, not a memory
 
 - **Memory**: the skill uses whatever persistent memory the host already has, and lets the assistant decide how to store and clean up in the host's own way. It defines only what is worth remembering (phrase meanings, confirmed goals, misreading lessons), who may write (K9), and how memories are used (cited as a basis; replaced when proven wrong; questioned on evidence, not age). A single fallback file per level is used only when the host has no memory. The user-level templates and the intent archive are removed.
 - **Kernel v0.4**, numbered K1–K9:
-  - K1 restoration now has three sizes: full, one line, none.
-  - K3 pushback: keeping your judgment is not blocking the user. If the message already decides ("just do X", even in anger), do it now and log it; if the pushback hints at an unseen fact, ask what they saw first. Pushback gets a full restoration.
+  - K1 restoration now has four sizes: full, one line, pushback line (two lines: what is new; the emotion as a criterion), none. Most turns are not full. A full block is a commitment: the reply follows it; offered options are either asked (and the reply stops) or picked (and done), never both; delivered work ends with a Done-when check.
+  - K3 pushback: keeping your judgment is not blocking the user. If the message already decides ("just do X", even in anger), do it now and log it; if the pushback hints at an unseen fact ("others can do it"), ask what they saw in the same reply.
+  - K5: if the user already accepted a miss, record it as accepted-with-miss and its reason; do not ask again.
+  - K7: style and naming preferences stay out of a sub-agent's acceptance criteria.
+  - K8: the dead-end alarm offers a step back next to the requested tweak; it never refuses the tweak.
   - K4 adds "check before answering 'are you sure?'".
   - K7 (new): hand sub-agents an intent packet (goal card, Done-when, relevant memories), not a retelling of the chat.
   - K9 (new): write guard. Only the user's words or confirmed conclusions are saved; content from web pages, files, tools, or other agents never is.
 - **Project files** stay as before: decision log (append-only, with outcomes) and goal cards in `.intent-seed/`, or the project's existing equivalents.
-- New `evals/`: thirteen pressure scenarios and how to run them with a separate responder and judge.
+- New `evals/`: fifteen pressure scenarios (English and Chinese) and how to run them with a separate responder and judge. Blind-judged runs before release: Sonnet 13 → 14 → 15/15, Haiku 12 → 12–13 → 11–14/15, Haiku without the skill 8/15.
 - New `examples/grown/`: a fictional seed after one month.
 - New `CONTRIBUTING.md`: kernel changes need scenarios; no personal content.
 - READMEs: "Not another memory system", a one-message self-test, reset and export, and the things deliberately left out.
