@@ -1,0 +1,3 @@
+# Personal layer is local-only; never publish it.
+.intent-seed/personal/
+.claude/settings.local.json
