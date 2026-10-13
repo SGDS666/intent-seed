@@ -1,0 +1,2 @@
+# intent-seed project layer (local by default; remove this line to share it with your team)
+.intent-seed/

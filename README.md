@@ -50,7 +50,8 @@ We do not publish anyone's tuned version. The repository contains only the kerne
 
 ```
 skill/intent-seed/SKILL.md            the Claude Code skill (kernel + growth rules)
-skill/intent-seed/personal-template/  empty personal-layer files with format notes
+skill/intent-seed/templates/user/     empty user-level files (how you talk, how you like answers)
+skill/intent-seed/templates/project/  empty project-level files (goals, decisions, goal cards)
 hooks/intent_reminder.txt             a one-line reminder for a UserPromptSubmit hook
 hooks/settings.example.json           example hook configuration
 PROMPT.md                             a condensed kernel for assistants without skills
@@ -100,15 +101,23 @@ Only after this does the assistant write the new draft, and it checks the draft 
 
 ## How the personal layer grows
 
-The personal layer lives in `.intent-seed/personal/` (project level) or `~/.intent-seed/personal/` (user level). It has five files:
+The personal layer lives in two places, because some things about you are true everywhere and some are true only in one project.
 
-- `intent-archive.md`: intent you have confirmed ("yes, that's exactly it").
+**User level, `~/.intent-seed/`**: how *you* talk. It travels with you to every project.
+
 - `expression-dictionary.md`: what your phrases usually mean. For example, "it doesn't feel right" may refer to pacing rather than color.
 - `preferences.md`: things you don't want expanded, how much detail you like, whether you prefer visuals or text.
-- `iteration-log.md`: each time the restoration was wrong, redundant, or missed something: date, symptom, root cause, which personal-layer entry changed, and how it was verified.
-- `decision-log.md`: each time you decided against the assistant's stated view: the decision, its original view and reason, and later the outcome. It survives conversation resets, so the pushback rule can be checked afterwards, and over time it shows where your judgment and the assistant's tend to differ.
+- `iteration-log.md`: each time the restoration was wrong, redundant, or missed something: date, symptom, root cause, which entry changed, and how it was verified.
 
-The growth rules are in `SKILL.md`. In short: confirmations go to the archive, corrections go to the log and update the dictionary or preferences, and a periodic review reads only the personal layer and proposes changes, which take effect only after you approve them. No review may edit the kernel.
+**Project level, `<project root>/.intent-seed/`**: what *this project* is for. It stays in the project.
+
+- `intent-archive.md`: goals you have confirmed for this project ("yes, that's exactly it").
+- `decision-log.md`: each time you decided against the assistant's stated view here: the decision, its original view and reason, and later the outcome. It survives conversation resets, so the pushback rule can be checked afterwards.
+- `goal-cards/`: one card per ongoing line of work: the final experience, what it must not become, references, and acceptance criteria.
+
+**First run.** The first time you use it, the assistant offers to create the user level. The first time you work in a project that has no `.intent-seed/`, it asks once whether to set up a project-level seed there, and offers to add it to `.gitignore`. Nothing is created without your agreement.
+
+The growth rules are in `SKILL.md`. In short: how you phrase things goes to the user level; what you want in this project goes to the project level; a periodic review reads both and proposes changes, which take effect only after you approve them. No review may edit the kernel.
 
 ## Cold start
 
@@ -116,7 +125,7 @@ When the personal layer is nearly empty, the assistant asks more, offers two con
 
 ## Privacy
 
-- The personal layer is **local**. Do not commit `.intent-seed/personal/` or `~/.intent-seed/` to a public repository. The repository's `.gitignore` already excludes the project-level path.
+- Both levels are **local by default**. `~/.intent-seed/` never needs to leave your machine. The project-level `.intent-seed/` is added to `.gitignore` unless you choose to share it with your team; never commit it to a public repository.
 - The kernel contains no personal data. Keep it that way if you fork.
 
 ## Limitations

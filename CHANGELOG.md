@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3 — 2026-10-14
+
+- The personal layer now has two levels. **User level** (`~/.intent-seed/`): expression dictionary, preferences, iteration log; it learns how you talk and travels with you. **Project level** (`<project root>/.intent-seed/`): intent archive, decision log, goal cards, and optional project-only meanings; it stays in the project.
+- First run: the assistant offers to create the user level once, and asks once per project whether to set up a project-level seed (and add it to `.gitignore`). Nothing is created without agreement; a refusal is remembered.
+- Goal cards move into the project level (`.intent-seed/goal-cards/`), with a template.
+- Templates reorganised into `templates/user/` and `templates/project/`.
+
 ## v0.2 — 2026-10-14
 
 From review feedback:
