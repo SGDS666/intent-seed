@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2 — 2026-10-14
+
+From review feedback:
+
+- Kernel rule 3 (pushback): a new feeling now counts only for what the user wants (taste, priorities, goals), never for whether something is correct or feasible. Frustration or repetition is not new information. This closes a gap where pressure could be relabeled as a "new feeling".
+- New personal-layer file `decision-log.md`: every "user decided; my original view was Y" is written down with its reason and, later, its outcome, so the pushback rule can be checked after a conversation reset.
+- Hook example now uses `$CLAUDE_PROJECT_DIR`, so it no longer fails silently when the working directory is not the project root.
+
 ## v0.1 — 2026-10-14
 
 First public release.

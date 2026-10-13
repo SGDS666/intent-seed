@@ -42,7 +42,7 @@ intent-seed has two layers.
 
 1. **Kernel (fixed).** A small set of rules about *how to restore intent*: restate the request in five parts before acting, separate guesses from confirmed intent, define "done" before starting, check results against that definition rather than moving the goalposts, and keep a goal card per line of work so the target stays visible. The kernel is the same for everyone and is **not changed by iteration**. Otherwise the act of iterating could slowly erase the property that prevents drift (not being carried away by mood) and turn the assistant into a yes-man. The kernel changes only when you edit it by hand or upgrade it from upstream.
 
-2. **Personal layer (empty at the start).** Four small files that record your confirmed intent, the way you tend to phrase things, your preferences, and a log of past misreadings. It grows from your own corrections and confirmations.
+2. **Personal layer (empty at the start).** Five small files that record your confirmed intent, the way you tend to phrase things, your preferences, a log of past misreadings, and a log of decisions you made against the assistant's advice. It grows from your own corrections and confirmations.
 
 We do not publish anyone's tuned version. The repository contains only the kernel and an empty personal template.
 
@@ -76,6 +76,8 @@ cp path/to/intent-seed/hooks/intent_reminder.txt .claude/hooks/
 # then merge hooks/settings.example.json into .claude/settings.json
 ```
 
+The example hook uses `$CLAUDE_PROJECT_DIR`, so it keeps working when the session's working directory is not the project root. For a user-level install, point the command at `~/.claude/hooks/intent_reminder.txt` instead.
+
 **For other assistants:** paste `PROMPT.md` into custom instructions. In that case you maintain the personal layer yourself.
 
 ## What it looks like
@@ -98,12 +100,13 @@ Only after this does the assistant write the new draft, and it checks the draft 
 
 ## How the personal layer grows
 
-The personal layer lives in `.intent-seed/personal/` (project level) or `~/.intent-seed/personal/` (user level). It has four files:
+The personal layer lives in `.intent-seed/personal/` (project level) or `~/.intent-seed/personal/` (user level). It has five files:
 
 - `intent-archive.md`: intent you have confirmed ("yes, that's exactly it").
 - `expression-dictionary.md`: what your phrases usually mean. For example, "it doesn't feel right" may refer to pacing rather than color.
 - `preferences.md`: things you don't want expanded, how much detail you like, whether you prefer visuals or text.
 - `iteration-log.md`: each time the restoration was wrong, redundant, or missed something: date, symptom, root cause, which personal-layer entry changed, and how it was verified.
+- `decision-log.md`: each time you decided against the assistant's stated view: the decision, its original view and reason, and later the outcome. It survives conversation resets, so the pushback rule can be checked afterwards, and over time it shows where your judgment and the assistant's tend to differ.
 
 The growth rules are in `SKILL.md`. In short: confirmations go to the archive, corrections go to the log and update the dictionary or preferences, and a periodic review reads only the personal layer and proposes changes, which take effect only after you approve them. No review may edit the kernel.
 
